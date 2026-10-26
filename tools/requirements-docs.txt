@@ -1,0 +1,2 @@
+# Only needed to rebuild the handbook PDF; not used by the monitor.
+pypdf>=6,<7

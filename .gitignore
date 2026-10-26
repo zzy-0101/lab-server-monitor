@@ -1,0 +1,37 @@
+__pycache__/
+*.pyc
+.DS_Store
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+id_rsa
+id_ed25519*
+
+# Personal connection settings and runtime state
+lab_servers/servers.json
+lab_servers/gui_config.json
+lab_servers/*.runtime.json
+lab_servers/*.tmp-*
+lab_servers/ssh_config.preview
+
+# Local deployments and internal records
+environments/
+archive/
+docs/maintenance.md
+docs/references/
+docs/screenshots/
+docs/templates/其他会话任务提示词.md
+lab_servers/configure_idea_env.py
+lab_servers/validate_idea_env.py
+lab_servers/env_inventory.py
+lab_servers/env_probe.py
+lab_servers/shared_julia.py
+lab_servers/shared_julia_remote.py
+
+.venv/
+dist/
+
+.cache/
+docs/guide/.build/

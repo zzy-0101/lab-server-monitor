@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>服务器监控</title>
+  <link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <a class="brand" href="#" aria-label="监控总览">服务器监控</a>
+    <button class="nav-button active" id="overview-button">服务器总览 <span class="count" id="nav-count">7</span></button>
+    <div class="sidebar-heading"><span>服务器</span><button id="sidebar-add" title="添加服务器" aria-label="添加服务器">＋</button></div>
+    <div id="server-nav" class="server-nav"></div>
+    <div class="sidebar-bottom"><button id="quit-button" class="quit-button">退出程序</button></div>
+  </aside>
+  <main>
+    <div id="connection-banner" class="banner" role="alert" hidden></div>
+    <section class="content">
+      <div class="page-heading"><h1>服务器总览</h1><div class="heading-actions"><span class="connection-status"><span class="dot green" id="poll-dot"></span><span id="poll-label">正在连接…</span></span><button class="button primary" id="add-server">添加服务器</button></div></div>
+      <div class="summary-grid">
+        <div class="summary-card"><span class="summary-label">在线服务器</span><div class="summary-value"><span id="sum-online">—</span><small id="sum-total">/ 7</small></div><span class="summary-note" id="sum-status">正在连接</span></div>
+        <div class="summary-card"><span class="summary-label">空闲逻辑核</span><div class="summary-value" id="sum-cpu">—</div><span class="summary-note">在线服务器合计</span></div>
+        <div class="summary-card"><span class="summary-label">可用内存</span><div class="summary-value"><span id="sum-memory">—</span><small>GiB</small></div></div>
+        <div class="summary-card"><span class="summary-label" id="sum-process-label">我的进程</span><div class="summary-value" id="sum-process">—</div><span class="summary-note" id="sum-process-note">当前登录账号</span></div>
+      </div>
+      <div class="section-heading"><div><h2>资源总览</h2><span class="section-subtitle" id="inventory-caption"></span></div><div class="toolbar"><label class="interval-label">每 <select id="interval" aria-label="刷新间隔"><option value="5">5 秒</option><option value="10" selected>10 秒</option><option value="30">30 秒</option><option value="60">60 秒</option></select> 更新</label><button class="button small" id="pause-button">暂停</button><button class="button small" id="refresh-button">刷新</button></div></div>
+      <div id="server-cards" class="server-grid"></div>
+      <section class="process-section disk-section" id="disk-section" aria-label="磁盘与挂载">
+        <div class="process-heading"><h2>磁盘与挂载 <span class="subtle-count" id="disk-count">0</span></h2><span class="disk-unit">单位：GiB</span></div>
+        <div class="process-toolbar"><label class="search-field"><input id="disk-search" type="search" placeholder="搜索挂载路径、设备或文件系统" aria-label="搜索磁盘"></label><select id="disk-server-filter" aria-label="筛选磁盘服务器"><option value="">所有服务器</option></select></div>
+        <p class="disk-warning" id="disk-warning" role="status" hidden></p>
+        <div class="table-scroll disk-table-scroll" id="disk-table-scroll"><table><thead><tr><th>服务器</th><th class="mount-column">挂载路径</th><th>设备 / 文件系统</th><th class="numeric">总容量 GiB</th><th class="numeric">已用 GiB</th><th class="numeric">可用 GiB</th><th class="disk-usage-column">已用比例</th><th>状态</th></tr></thead><tbody id="disk-body"></tbody></table><div id="disk-empty" class="table-empty"><strong>等待磁盘采样</strong><p></p></div></div>
+        <div class="disk-footnote"><span id="disk-updated">等待采样</span></div>
+      </section>
+      <section class="process-section">
+        <div class="process-heading"><h2>进程与任务 <span class="subtle-count" id="process-count">0</span></h2><div class="segmented" role="group" aria-label="进程范围"><button id="scope-mine" data-scope="mine" class="selected" aria-pressed="true">我的进程</button><button id="scope-all" data-scope="all" aria-pressed="false">全部进程</button></div></div>
+        <div class="process-toolbar"><label class="search-field"><input id="process-search" type="search" placeholder="搜索命令、用户、PID 或目录" aria-label="搜索进程"></label><select id="server-filter" aria-label="筛选服务器"><option value="">所有服务器</option></select><span class="scope-note" id="process-scope-note">当前登录账号</span></div>
+        <div class="table-scroll" id="table-scroll"><table><thead><tr><th><button data-sort="server">服务器 <span>↕</span></button></th><th><button data-sort="pid">PID <span>↕</span></button></th><th><button data-sort="user">用户 <span>↕</span></button></th><th class="numeric"><button data-sort="cpu_percent">CPU % <span>↓</span></button></th><th class="numeric"><button data-sort="rss_gib">内存 GiB <span>↕</span></button></th><th class="numeric"><button data-sort="threads">线程 <span>↕</span></button></th><th><button data-sort="elapsed_seconds">运行时长 <span>↕</span></button></th><th>状态</th><th class="command-column">命令 / 工作目录</th></tr></thead><tbody id="process-body"></tbody></table><div id="table-empty" class="table-empty"><strong>正在读取进程</strong><p></p></div></div>
+        <div class="table-footer"><span id="pagination-label">0 个进程</span><div><button class="button small" id="previous-page">上一页</button><span id="page-number">1 / 1</span><button class="button small" id="next-page">下一页</button></div></div>
+      </section>
+      <footer class="page-footer"><span>CPU 100% = 1 个逻辑核</span><span id="updated-label">等待首次采样</span></footer>
+    </section>
+  </main>
+</div>
+<dialog id="server-dialog">
+  <form id="server-form">
+    <div class="dialog-heading"><h2 id="dialog-title">添加服务器</h2><button type="button" class="icon-button" id="close-dialog" aria-label="关闭">×</button></div>
+    <input type="hidden" id="field-id">
+    <label class="field">显示名称<input id="field-name" aria-label="显示名称" maxlength="80" placeholder="例如：7 号服务器" required></label>
+    <div class="field-row"><label class="field grow">IP 地址 / 主机名<input id="field-host" aria-label="IP 地址 / 主机名" placeholder="172.17.176.141" maxlength="253" required autocomplete="off"></label><label class="field port-field">端口<input id="field-port" aria-label="端口" type="number" min="1" max="65535" value="22" required></label></div>
+    <label class="field username-field">用户名<input id="field-user" aria-label="用户名" placeholder="自己的服务器账号" maxlength="64" required autocomplete="off"></label>
+    <label class="checkbox-field remember-user-field"><input type="checkbox" id="field-remember-user" checked>记住用户名</label>
+    <label class="field">认证方式<select id="field-auth" aria-label="认证方式"><option value="key">SSH 密钥</option><option value="password">密码</option><option value="auto">自动：先密钥，再密码</option></select></label>
+    <label class="field" id="identity-field">本机私钥路径<input id="field-identity" aria-label="本机私钥路径" placeholder="~/.ssh/id_ed25519" autocomplete="off"><span class="field-help">留空使用默认密钥</span></label>
+    <div class="field" id="password-field" hidden><label for="field-password">登录密码</label><div class="password-input"><input id="field-password" aria-label="登录密码" type="password" autocomplete="new-password" placeholder="请输入登录密码"><button type="button" id="toggle-password" aria-label="显示密码">显示</button></div><div class="remember-options"><label class="checkbox-field"><input type="checkbox" id="field-remember-password">记住密码</label><span class="field-help" id="password-help">本次有效</span></div></div>
+    <details class="advanced"><summary>更多设置</summary><label class="field">远端 Python 解释器<input id="field-python" aria-label="远端 Python 解释器" value="python3" placeholder="python3 或解释器绝对路径"></label><label class="checkbox-field"><input type="checkbox" id="field-clear-password">清除已保存的密码</label></details>
+    <label class="checkbox-field enabled-field"><input type="checkbox" id="field-enabled" checked>启用此服务器的监控</label>
+    <p class="form-error" id="form-error" role="alert" hidden></p>
+    <div class="dialog-footer"><button type="button" class="button danger" id="delete-server" hidden>删除服务器</button><span class="spacer"></span><button type="button" class="button" id="cancel-dialog">取消</button><button type="submit" class="button primary" id="save-server">保存并连接</button></div>
+  </form>
+</dialog>
+<dialog id="detail-dialog"><div class="dialog-heading"><h2>进程详情</h2><button class="icon-button" id="close-detail" aria-label="关闭">×</button></div><div id="detail-content"></div></dialog>
+<div id="toast" role="status" hidden></div>
+</body></html>
