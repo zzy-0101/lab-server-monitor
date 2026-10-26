@@ -9,7 +9,7 @@
 
 ## 开始使用
 
-从[下载页面](https://github.com/zzy-0101/lab-server-monitor/releases/latest)获取 `server_monitor.zip`，完整解压后打开其中的 `LabMonitor` 文件夹。电脑需要 Python 3.9 或更新版本，并能访问服务器所在内网或相应 VPN。
+从[下载页面](https://github.com/zzy-0101/server-monitor/releases/latest)获取 `server_monitor.zip`，完整解压后打开其中的 `server_monitor` 文件夹。电脑需要 Python 3.9 或更新版本，并能访问服务器所在内网或相应 VPN。
 
 | 系统 | 首次使用 | 后续启动 |
 |---|---|---|
@@ -34,10 +34,10 @@ python3 tools/launch_monitor.py
 
 “磁盘与挂载”显示各挂载路径的总容量、已用和可用空间。点击进程行可以查看完整命令与工作目录。
 
-连接设置保存在 `lab_servers/gui_config.json`，密码保存在本机系统凭据存储中。命令行用户可复制 `lab_servers/servers.example.json` 为 `lab_servers/servers.json`，填写自己的账号并配置 SSH 密钥后运行：
+连接设置保存在 `server_monitor/gui_config.json`，密码保存在本机系统凭据存储中。命令行用户可复制 `server_monitor/servers.example.json` 为 `server_monitor/servers.json`，填写自己的账号并配置 SSH 密钥后运行：
 
 ```bash
-python3 lab_servers/monitor.py --watch 10
+python3 server_monitor/monitor.py --watch 10
 ```
 
 ## 两份说明

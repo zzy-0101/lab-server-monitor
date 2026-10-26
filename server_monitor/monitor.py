@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Parallel, read-only lab server monitoring using SSH and Python stdlib."""
+"""Parallel, read-only server monitoring using SSH and Python stdlib."""
 import argparse
 import concurrent.futures
 import json

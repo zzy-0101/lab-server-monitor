@@ -94,7 +94,7 @@ class MacKeychain:
 
     def query(self, key):
         return {'kSecClass': self.constant('kSecClassGenericPassword'),
-                'kSecAttrService': 'LabMonitor', 'kSecAttrAccount': 'server-' + key,
+                'kSecAttrService': 'ServerMonitor', 'kSecAttrAccount': 'server-' + key,
                 'kSecUseAuthenticationUI': self.constant('kSecUseAuthenticationUIFail')}
 
     @staticmethod
@@ -164,7 +164,7 @@ class WindowsCredentials:
 
     @staticmethod
     def target(key):
-        return 'LabMonitor/server-' + key
+        return 'ServerMonitor/server-' + key
 
     @staticmethod
     def check(result):
@@ -188,7 +188,7 @@ class WindowsCredentials:
         if len(encoded) > 2560:
             raise CredentialError('密码记录超过 Windows 凭据存储的长度限制。')
         buffer = ctypes.create_string_buffer(encoded)
-        entry = WindowsCredential(Type=1, TargetName=self.target(key), UserName='LabMonitor',
+        entry = WindowsCredential(Type=1, TargetName=self.target(key), UserName='ServerMonitor',
                                   CredentialBlobSize=len(encoded), CredentialBlob=ctypes.addressof(buffer), Persist=2)
         self.check(self.api.CredWriteW(ctypes.byref(entry), 0))
 

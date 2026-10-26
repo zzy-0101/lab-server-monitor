@@ -105,7 +105,7 @@ class Dashboard:
         else:
             source = inventory()
             self.servers = [validate_server(dict(s, name=str(s['id']) + ' 号服务器', auth=s.get('auth', 'key' if DEFAULT_KEY else 'password')),
-                                           'lab-' + str(s['id'])) for s in source]
+                                           'server-' + str(s['id'])) for s in source]
             self.settings = dict(interval=10, scope='mine', paused=False, timeout=45)
         if self.settings['scope'] not in ('mine', 'all'):
             self.settings['scope'] = 'mine'
@@ -345,7 +345,7 @@ def make_handler(app, token):
             if self.headers.get('Host') != expected:
                 self.respond(403, {'error': '仅允许通过本机地址访问。'})
                 return False
-            if api and not hmac.compare_digest(self.headers.get('X-Lab-Token', ''), token):
+            if api and not hmac.compare_digest(self.headers.get('X-Monitor-Token', ''), token):
                 self.respond(403, {'error': '会话已失效，请重新双击启动程序。'})
                 return False
             origin = self.headers.get('Origin')
@@ -415,7 +415,7 @@ def existing(runtime):
         if info.get('pid') == os.getpid():
             return None
         request = urllib.request.Request('http://127.0.0.1:{}/api/ping'.format(int(info['port'])),
-                                         headers={'X-Lab-Token': info['token']})
+                                         headers={'X-Monitor-Token': info['token']})
         opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
         response = json.loads(opener.open(request, timeout=1).read())
         if response.get('pid') == info['pid']:

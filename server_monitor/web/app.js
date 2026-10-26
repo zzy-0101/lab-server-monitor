@@ -1,7 +1,7 @@
 'use strict';
 const $ = id => document.getElementById(id);
-const token = location.hash.slice(1) || sessionStorage.getItem('lab-token') || '';
-if (token) sessionStorage.setItem('lab-token', token);
+const token = location.hash.slice(1) || sessionStorage.getItem('server-monitor-token') || '';
+if (token) sessionStorage.setItem('server-monitor-token', token);
 if (location.hash) history.replaceState(null, '', location.pathname);
 let state = {servers: [], settings: {scope: 'mine', interval: 10, paused: false}};
 let selected = '', query = '', sortKey = 'cpu_percent', descending = true, page = 1;
@@ -32,7 +32,7 @@ function friendly(message) {
 }
 function toast(text, error = false) { const el = $('toast'); clearTimeout(toastTimer); el.textContent = text; el.className = error ? 'error' : ''; el.hidden = false; toastTimer = setTimeout(() => {el.hidden = true;}, 4000); }
 async function api(path, body) {
-  const headers = {'X-Lab-Token': token};
+  const headers = {'X-Monitor-Token': token};
   const options = {headers, cache: 'no-store'};
   if (body !== undefined) {options.method = 'POST'; headers['Content-Type'] = 'application/json'; options.body = JSON.stringify(body);}
   const controller = new AbortController(); options.signal = controller.signal;

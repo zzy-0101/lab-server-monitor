@@ -21,7 +21,7 @@ class PasswordPrompt:
         self.stop = threading.Event()
 
     def __enter__(self):
-        self.directory = tempfile.TemporaryDirectory(prefix='labpass-', dir='/tmp')
+        self.directory = tempfile.TemporaryDirectory(prefix='monitor-pass-', dir='/tmp')
         root = Path(self.directory.name)
         self.socket_path = str(root / 's')
         self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -36,7 +36,7 @@ if 'password' not in prompt:
     sys.exit(1)
 s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 s.settimeout(3)
-s.connect(os.environ['LAB_ASKPASS_SOCKET'])
+s.connect(os.environ['SERVER_MONITOR_ASKPASS_SOCKET'])
 parts = []
 while True:
     b = s.recv(4096)
@@ -49,7 +49,7 @@ sys.stdout.buffer.write(b''.join(parts) + b'\\n')
         self.thread = threading.Thread(target=self.serve, daemon=True)
         self.thread.start()
         self.env = dict(os.environ, SSH_ASKPASS=str(helper), SSH_ASKPASS_REQUIRE='force',
-                        DISPLAY=os.environ.get('DISPLAY') or ':0', LAB_ASKPASS_SOCKET=self.socket_path)
+                        DISPLAY=os.environ.get('DISPLAY') or ':0', SERVER_MONITOR_ASKPASS_SOCKET=self.socket_path)
         return self.env
 
     def serve(self):

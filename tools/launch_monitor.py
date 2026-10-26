@@ -19,8 +19,8 @@ def main():
         print('OpenSSH client (ssh) was not found. Please install it and retry.')
         return 1
     root = Path(__file__).resolve().parents[1]
-    sys.path.insert(0, str(root / 'lab_servers'))
-    sys.argv = [str(root / 'lab_servers' / 'dashboard.py'), '--open'] + sys.argv[1:]
+    sys.path.insert(0, str(root / 'server_monitor'))
+    sys.argv = [str(root / 'server_monitor' / 'dashboard.py'), '--open'] + sys.argv[1:]
     from dashboard import main as start
     start()
     return 0

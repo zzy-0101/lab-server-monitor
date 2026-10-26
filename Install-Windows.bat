@@ -18,7 +18,7 @@ if not errorlevel 1 (
 echo Python 3.9 or newer was not found.
 goto failed
 :install
-".venv\Scripts\python.exe" -m pip install -r lab_servers\requirements-windows.txt
+".venv\Scripts\python.exe" -m pip install -r server_monitor\requirements-windows.txt
 if errorlevel 1 goto failed
 echo.
 echo Installation complete. Double-click Start-Windows.bat to open the monitor.

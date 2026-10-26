@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "alias": "lab-server-1",
+    "alias": "server-1",
     "host": "172.17.176.141",
     "port": 88,
     "location": "C814",
@@ -14,7 +14,7 @@
   },
   {
     "id": 2,
-    "alias": "lab-server-2",
+    "alias": "server-2",
     "host": "172.17.176.242",
     "port": 22,
     "location": "8楼",
@@ -27,7 +27,7 @@
   },
   {
     "id": 3,
-    "alias": "lab-server-3",
+    "alias": "server-3",
     "host": "172.17.177.147",
     "port": 22,
     "location": "8楼",
@@ -40,7 +40,7 @@
   },
   {
     "id": 4,
-    "alias": "lab-server-4",
+    "alias": "server-4",
     "host": "172.17.177.162",
     "port": 22,
     "location": "C8E10",
@@ -53,7 +53,7 @@
   },
   {
     "id": 5,
-    "alias": "lab-server-5",
+    "alias": "server-5",
     "host": "172.17.163.12",
     "port": 22,
     "location": "6楼",
@@ -66,7 +66,7 @@
   },
   {
     "id": 6,
-    "alias": "lab-server-6",
+    "alias": "server-6",
     "host": "172.17.177.162",
     "port": 23,
     "location": "C8E10",
@@ -79,7 +79,7 @@
   },
   {
     "id": 7,
-    "alias": "lab-server-7",
+    "alias": "server-7",
     "host": "172.17.176.141",
     "port": 3,
     "location": "C814",
