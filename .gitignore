@@ -1,37 +1,39 @@
-__pycache__/
-*.pyc
-.DS_Store
-.env
-.env.*
-!.env.example
-*.pem
-*.key
-id_rsa
-id_ed25519*
+# Publish only the application, README and two PDF manuals.
+/*
+!/.gitignore
+!/.gitattributes
+!/README.md
+!/服务器监控.command
+!/Install-Windows.bat
+!/Start-Windows.bat
+!/lab_servers/
+!/tools/
+!/docs/
 
-# Personal connection settings and runtime state
-lab_servers/servers.json
-lab_servers/gui_config.json
-lab_servers/*.runtime.json
-lab_servers/*.tmp-*
-lab_servers/ssh_config.preview
+/lab_servers/*
+!/lab_servers/dashboard.py
+!/lab_servers/monitor.py
+!/lab_servers/remote_probe.py
+!/lab_servers/credential_store.py
+!/lab_servers/paths.py
+!/lab_servers/transport.py
+!/lab_servers/transport_paramiko.py
+!/lab_servers/requirements-windows.txt
+!/lab_servers/servers.example.json
+!/lab_servers/web/
+/lab_servers/web/*
+!/lab_servers/web/index.html
+!/lab_servers/web/style.css
+!/lab_servers/web/app.js
 
-# Local deployments and internal records
-environments/
-archive/
-docs/maintenance.md
-docs/references/
-docs/screenshots/
-docs/templates/其他会话任务提示词.md
-lab_servers/configure_idea_env.py
-lab_servers/validate_idea_env.py
-lab_servers/env_inventory.py
-lab_servers/env_probe.py
-lab_servers/shared_julia.py
-lab_servers/shared_julia_remote.py
+/tools/*
+!/tools/launch_monitor.py
+!/tools/monitor-cli.command
 
-.venv/
-dist/
-
-.cache/
-docs/guide/.build/
+/docs/*
+!/docs/guide/
+!/docs/references/
+/docs/guide/*
+!/docs/guide/服务器监控入门指南.pdf
+/docs/references/*
+!/docs/references/服务器使用指南.pdf
