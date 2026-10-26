@@ -1,7 +1,7 @@
 % Compile with XeLaTeX. Screenshots use demonstration accounts and data.
 \documentclass[UTF8,11pt,fontset=fandol]{ctexart}
 \usepackage[a4paper,left=22mm,right=22mm,top=24mm,bottom=23mm]{geometry}
-\usepackage{graphicx,enumitem,caption,needspace}
+\usepackage{graphicx,enumitem,caption,needspace,float}
 \usepackage[hidelinks]{hyperref}
 \usepackage{xurl}
 \hypersetup{unicode=true,pdftitle={服务器占用可视化使用指南},
@@ -78,7 +78,7 @@
 \section{监控程序的启动}
 \label{sec:startup-check}
 
-监控程序放在 \code{LabMonitor-Mac-Windows.zip} 中。先完整解压压缩包，进入 \code{LabMonitor} 文件夹。
+监控程序放在 \code{server_monitor.zip} 中。先完整解压压缩包，进入 \code{LabMonitor} 文件夹。
 本机需要安装 Python 3.9 或更新版本，并连接校园内网或相应 VPN。
 
 Python 的安装地址为 \url{https://www.python.org/downloads/}。
@@ -129,7 +129,7 @@ Windows 版已完成 SSH 后端和凭据接口测试，完整启动流程尚待 
   \item 按同样的方法设置其他服务器。不同服务器的用户名可以分别填写，暂时不用的服务器保留停用状态。
 \end{enumerate}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=.43\linewidth]{images/connect.jpg}
   \caption{编辑服务器连接信息，图中账号和后文数值均为演示数据}
@@ -152,7 +152,7 @@ Windows 版已完成 SSH 后端和凭据接口测试，完整启动流程尚待 
 连接成功后，界面如图\ref{fig:overview}。上方显示在线服务器的资源汇总，下方分别列出各台服务器的 CPU、内存和进程情况。
 CPU 用于执行计算，内存用于存放程序运行时的数据，磁盘用于保存代码、输入数据和结果文件。
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=.96\linewidth]{images/overview.jpg}
   \caption{服务器监控界面}
@@ -172,11 +172,12 @@ CPU 用于执行计算，内存用于存放程序运行时的数据，磁盘用�
 
 CPU 空闲率和可用内存反映整台服务器的情况，上方汇总为各台在线服务器之和。
 
+\Needspace{16\baselineskip}
 \subsection{进程与任务}
 
 向下滚动到“进程与任务”，如图\ref{fig:process}。一个正在运行的程序实例称为一个进程，一个计算任务也可能包含多个进程。
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{images/process.jpg}
   \caption{进程与任务列表}
@@ -198,7 +199,9 @@ CPU 空闲率和可用内存反映整台服务器的情况，上方汇总为各�
   \item \textbf{命令 / 工作目录}：显示启动程序的命令，以及程序所在的目录。点击进程所在行可以查看完整内容。
 \end{itemize}
 
-搜索框可以按程序名、用户名、PID 或工作目录筛选，点击列名可以排序。
+上方“运行中的进程”统计状态为 R 或采样期间有 CPU 占用的进程。进程列表默认只显示这些活跃进程；短暂休眠但采样期间仍有计算的进程也会保留。
+状态下拉框可选择全部状态、运行中、休眠、I/O 等待、已停止或僵尸进程。
+搜索框可以按程序名、用户名、PID 或工作目录筛选，点击列名可以排序。状态筛选会在排序和自动更新时保留。
 点击某台服务器或使用下拉框，可以只看该台机器；点击左侧“服务器总览”恢复查看所有服务器。
 
 \subsection{磁盘容量与挂载路径}
@@ -206,7 +209,7 @@ CPU 空闲率和可用内存反映整台服务器的情况，上方汇总为各�
 点击服务器卡片上的“查看容量与路径”，可以跳到该服务器的“磁盘与挂载”列表，如图\ref{fig:disk}。
 每一行显示一个存储挂载点的总容量、已用容量、可用容量和挂载路径，容量单位为 GiB（$1\,\mathrm{GiB}=2^{30}$ 字节）。
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{images/disks.jpg}
   \caption{磁盘容量与挂载路径}
@@ -257,7 +260,7 @@ CPU 空闲率和可用内存反映整台服务器的情况，上方汇总为各�
   在连接的“更多设置”中填写服务器上的 Python 解释器路径。
   7 号服务器已预设为 \code{/usr/local/anaconda3/bin/python3}。
   \item \textbf{进程列表没有显示预期程序。}
-  检查服务器、登录账号和搜索条件；程序已经退出时，可以到任务目录查看日志和结果。
+  检查服务器、登录账号、状态筛选和搜索条件，也可以选择“全部状态”查看；程序已经退出时，可以到任务目录查看日志和结果。
   \item \textbf{浏览器无法连接监控页面。}
   重新双击启动文件，使用程序自动打开的地址。浏览器中的 \code{127.0.0.1} 是本机地址，端口由程序自动选择。
   \item \textbf{提示服务器主机密钥变化。}

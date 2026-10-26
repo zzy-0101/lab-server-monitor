@@ -57,6 +57,18 @@ def main():
                            dict(pid=4103,ppid=4001,user='your_username',uid=1000,state='S',threads=1,
                                 cpu_percent=0.0,rss_gib=.02,elapsed_seconds=19200,
                                 command='bash run_analysis.sh',cwd='/data1/your_username/project')]
+                for pid, status, cpu, command in [(4104, 'S', 40.0, 'python worker.py'),
+                                                  (4105, 'D', 0.0, 'python prepare_data.py'),
+                                                  (4106, 'T', 0.0, 'python paused_job.py'),
+                                                  (4107, 't', 0.0, 'python debug_job.py'),
+                                                  (4108, 'Z', 0.0, '[completed_job]')]:
+                    processes.append(dict(pid=pid,ppid=4001,user='your_username',uid=1000,state=status,
+                                          threads=2,cpu_percent=cpu,rss_gib=.5,elapsed_seconds=1200,
+                                          command=command,cwd='/data1/your_username/project'))
+            if i in (0,4):
+                processes=[dict(pid=4000+i,ppid=1,user='your_username',uid=1000,state='R',threads=2,
+                                cpu_percent=80.0,rss_gib=2.4,elapsed_seconds=7200,
+                                command='python simulation.py',cwd='/data1/your_username/project')]
             disks=[disk('/','/dev/nvme0n1p4',100,66,29),
                    disk('/home','/dev/nvme0n1p3',350,150,182),
                    disk('/data1','/dev/sda1',1833.6,900,840),

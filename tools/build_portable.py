@@ -21,7 +21,7 @@ for name in ('index.html', 'style.css', 'app.js'):
 
 
 def build(target=None):
-    target = Path(target) if target is not None else ROOT / 'dist' / 'LabMonitor-Mac-Windows.zip'
+    target = Path(target) if target is not None else ROOT / 'dist' / 'server_monitor.zip'
     target.parent.mkdir(parents=True, exist_ok=True)
     with ZipFile(target, 'w', ZIP_DEFLATED) as archive:
         for source, name in FILES.items():

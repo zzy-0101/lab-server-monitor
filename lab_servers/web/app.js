@@ -6,6 +6,15 @@ if (location.hash) history.replaceState(null, '', location.pathname);
 let state = {servers: [], settings: {scope: 'mine', interval: 10, paused: false}};
 let selected = '', query = '', sortKey = 'cpu_percent', descending = true, page = 1;
 let diskQuery = '';
+const processStates = ['active', 'all', 'R', 'S', 'D', 'T', 'Z'];
+let processState = localStorage.getItem('process-state-filter') || 'active';
+if (!processStates.includes(processState)) processState = 'active';
+const isActiveProcess = process => process.state === 'R' || Number(process.cpu_percent) > 0;
+function matchesProcessState(process) {
+  if (processState === 'all') return true;
+  if (processState === 'active') return isActiveProcess(process);
+  return processState === 'T' ? ['T', 't'].includes(process.state) : process.state === processState;
+}
 let polling = false, stopped = false, toastTimer, renderedFilter = '';
 const pageSize = 60, cards = new Map(), navs = new Map(), processRows = new Map();
 const diskRows = new Map();
@@ -106,8 +115,8 @@ function renderSummary() {
   $('sum-cpu').textContent=online.length?fmt(online.reduce((n,s)=>n+(s.data.idle_cpu_equivalents||0),0)):'—';
   const memoryRows=online.filter(s=>s.data.memory_available_gib!==null);
   $('sum-memory').textContent=memoryRows.length?fmt(memoryRows.reduce((n,s)=>n+s.data.memory_available_gib,0),0):'—';
-  $('sum-process').textContent=online.length?fmt(online.reduce((n,s)=>n+(s.scope_pending?0:s.data.processes.length),0),0):'—';
-  const label=$('sum-process-label');label.firstChild.textContent=state.settings.scope==='mine'?'我的进程 ':'全部可见进程 ';
+  $('sum-process').textContent=online.length?fmt(online.reduce((n,s)=>n+(s.scope_pending?0:s.data.processes.filter(isActiveProcess).length),0),0):'—';
+  $('sum-process-label').textContent='运行中的进程';
   $('sum-process-note').textContent=state.settings.scope==='mine'?'当前登录账号':'所有可见用户';
   $('inventory-caption').textContent=state.servers.length+' 台';
   const paused=state.settings.paused;$('pause-button').textContent=paused?'继续':'暂停';
@@ -167,6 +176,8 @@ function renderProcesses() {
   let rows=[];
   for(const server of state.servers){if(!server.enabled||!server.data||server.scope_pending||selected&&server.id!==selected)continue;for(const p of server.data.processes)rows.push({...p,user:p.user||server.user,server});}
   const total=rows.length,needle=query.trim().toLowerCase();
+  rows=rows.filter(matchesProcessState);
+  $('process-state-filter').value=processState;
   if(needle)rows=rows.filter(p=>[p.command,p.cwd,p.user,p.pid,p.server.name].some(v=>String(v||'').toLowerCase().includes(needle)));
   rows.sort((a,b)=>{let av=sortKey==='server'?a.server.name:a[sortKey],bv=sortKey==='server'?b.server.name:b[sortKey];if(av===null||av===undefined)return bv===null||bv===undefined?0:1;if(bv===null||bv===undefined)return -1;const comparison=typeof av==='number'?av-bv:String(av).localeCompare(String(bv),'zh-CN',{numeric:true});return(descending?-comparison:comparison)||String(a.server.id).localeCompare(String(b.server.id))||a.pid-b.pid;});
   const pages=Math.max(1,Math.ceil(rows.length/pageSize));page=Math.min(page,pages);const visible=rows.slice((page-1)*pageSize,page*pageSize),body=$('process-body'),keep=new Set();
@@ -181,8 +192,8 @@ function renderProcesses() {
   for(const [key,tr] of processRows){if(!keep.has(key)){tr.remove();processRows.delete(key);}}
   scroll.scrollTop=scrollTop;scroll.scrollLeft=scrollLeft;
   $('process-count').textContent=fmt(rows.length,0);$('table-empty').hidden=rows.length>0;
-  if(!rows.length){const title=$('table-empty').querySelector('strong'),description=$('table-empty').querySelector('p');const waiting=state.servers.some(s=>s.enabled&&(s.busy&&!s.data||s.scope_pending));title.textContent=query?'未找到匹配的进程':waiting?'正在读取进程':'当前范围下没有进程';description.textContent=query?'试试其他命令、用户或 PID。':waiting?'服务器连接和模式切换可能需要数十秒。':'可以切换服务器或选择“全部进程”查看。';}
-  $('pagination-label').textContent=rows.length?((page-1)*pageSize+1)+'–'+Math.min(page*pageSize,rows.length)+' / '+fmt(rows.length,0)+' 个进程'+(needle?'（共 '+fmt(total,0)+' 个）':''):'0 个进程';
+  if(!rows.length){const title=$('table-empty').querySelector('strong'),description=$('table-empty').querySelector('p');const waiting=state.servers.some(s=>s.enabled&&(s.busy&&!s.data||s.scope_pending));title.textContent=query?'未找到匹配的进程':waiting?'正在读取进程':'当前条件下没有进程';description.textContent=waiting?'正在读取服务器数据。':!state.servers.length?'添加服务器后查看进程。':'可调整状态、搜索条件或用户范围。';}
+  $('pagination-label').textContent=rows.length?((page-1)*pageSize+1)+'–'+Math.min(page*pageSize,rows.length)+' / '+fmt(rows.length,0)+' 个进程'+(needle||processState!=='all'?'（共 '+fmt(total,0)+' 个）':''):'0 个进程'+(total?'（共 '+fmt(total,0)+' 个）':'');
   $('page-number').textContent=page+' / '+pages;$('previous-page').disabled=page<=1;$('next-page').disabled=page>=pages;
   document.querySelectorAll('[data-sort]').forEach(button=>{button.querySelector('span').textContent=button.dataset.sort===sortKey?(descending?'↓':'↑'):'↕';});
 }
@@ -227,6 +238,7 @@ $('server-filter').addEventListener('change',()=>selectServer($('server-filter')
 $('disk-server-filter').addEventListener('change',()=>selectServer($('disk-server-filter').value));
 $('disk-search').addEventListener('input',()=>{diskQuery=$('disk-search').value;renderDisks();});
 $('process-search').addEventListener('input',()=>{query=$('process-search').value;page=1;renderProcesses();});
+$('process-state-filter').addEventListener('change',()=>{processState=$('process-state-filter').value;localStorage.setItem('process-state-filter',processState);page=1;renderProcesses();});
 for(const button of document.querySelectorAll('[data-sort]'))button.addEventListener('click',()=>{if(sortKey===button.dataset.sort)descending=!descending;else{sortKey=button.dataset.sort;descending=!['server','user','pid'].includes(sortKey);}page=1;renderProcesses();});
 $('previous-page').addEventListener('click',()=>{page--;renderProcesses();$('table-scroll').scrollTop=0;});$('next-page').addEventListener('click',()=>{page++;renderProcesses();$('table-scroll').scrollTop=0;});
 $('quit-button').addEventListener('click',async()=>{try{await api('shutdown',{});stopped=true;$('connection-banner').hidden=false;$('connection-banner').textContent='程序已退出，可以关闭页面。';$('poll-label').textContent='已退出';$('poll-dot').className='dot';}catch(error){toast(error.message,true);}});
